@@ -57,7 +57,7 @@ st.write(data.tail())
 # Plot raw data
 fig = px.line(data, x='Date', y='Close')
 st.plotly_chart(fig)
-ساخت: احمد و امین مصطفوی
+
 
 
 """
