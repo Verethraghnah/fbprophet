@@ -1,17 +1,17 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from fbprophet import Prophet
-from fbprophet.diagnostics import performance_metrics
-from fbprophet.diagnostics import cross_validation
-from fbprophet.plot import plot_cross_validation_metric
+from prophet import Prophet
+from prophet.diagnostics import performance_metrics
+from prophet.diagnostics import cross_validation
+from prophet.plot import plot_cross_validation_metric
 import base64
 #import neuralprophet as nprophet
-from fbprophet.plot import add_changepoints_to_plot
-from fbprophet.plot import plot_plotly
+from prophet.plot import add_changepoints_to_plot
+from prophet.plot import plot_plotly
 import plotly.offline as py
-from fbprophet.plot import add_changepoints_to_plot
-from fbprophet.plot import plot_components_plotly
+from prophet.plot import add_changepoints_to_plot
+from prophet.plot import plot_components_plotly
 st.title('پیش‌بینی اتوماتیک با استفاده از پکیج پیامبر فیس‌بوک')
 
 
