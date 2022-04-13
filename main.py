@@ -14,33 +14,51 @@ from fbprophet.plot import add_changepoints_to_plot
 from fbprophet.plot import plot_components_plotly
 st.title('پیش‌بینی اتوماتیک با استفاده از پکیج پیامبر فیس‌بوک')
 
-"""
-This data app uses Facebook's open-source Prophet library to automatically generate future forecast values from an imported dataset.
-You'll be able to import your data from a CSV file, visualize trends and features, analyze forecast performance, and finally download the created forecast 😵 
 
-**In beta mode**
+today = dt.date.today()
 
+before = today - dt.timedelta(days=7)
+start_date = st.sidebar.date_input('Start date', before)
+end_date = st.sidebar.date_input('End date', today)
+
+if start_date < end_date:
+    st.sidebar.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
+else:
+    st.sidebar.error('Error: End date must fall after start date.')
+
+st.title("Forcaster")
+
+function_list = ['fbprophet', 'Neural Networks']
+sidebar_function = st.sidebar.selectbox("Choose the forecasting method", function_list)
+crypotocurrencies = (
+    'BTC-USD', 'ETH-USD', 'BNB-USD', 'ADA-USD', 'SAND-USD', 'MANA-USD', 'XRP-USD', 'LTC-USD', 'EOS-USD', 'XLM-USD',
+    'TRX-USD', 'ETC-USD', 'SHIB-USD', 'DOGE-USD', 'TRX-USD', 'SOL-USD', 'FTM-USD', 'MATIC-USD',)
+
+selected_stock = st.selectbox('Select dataset for prediction', crypotocurrencies)
+
+n_years = st.slider('Hours of prediction:', 1, 24)
+period = n_years / 24
+
+
+@st.cache
+def load_data(ticker):
+    data = yf.download(ticker, start_date, end_date, interval='1min')
+    data.reset_index(inplace=True)
+    return data
+
+
+data_load_state = st.text('Loading data...')
+data = load_data(selected_stock)
+data_load_state.text('Loading data... done!')
+
+st.subheader('Raw data')
+st.write(data.tail())
+
+# Plot raw data
+fig = px.line(data, x='Date', y='Close')
+st.plotly_chart(fig)
 ساخت: احمد و امین مصطفوی
 
-"""
-
-"""
- مرحله‌ی اول: وارد کردن داده‌ها از تریدینگ‌ویوو
-"""
-df = st.file_uploader(
-    'Import the time series csv file here. Columns must be labeled ds and y. The input to Prophet is always a dataframe with two columns: ds and y. The ds (datestamp) column should be of a format expected by Pandas, ideally YYYY-MM-DD for a date or YYYY-MM-DD HH:MM:SS for a timestamp. The y column must be numeric, and represents the measurement we wish to forecast.',
-    type='csv')
-
-if df is not None:
-    data = pd.read_csv(df)
-    data.rename(columns={'time': 'ds', 'close': 'y'}, inplace=True)
-    data['ds'] = pd.to_datetime(data['ds'], errors='coerce', utc=True)
-    data['ds'] = data['ds'].dt.strftime('%Y-%m-%d %H:%M')
-    data.rename(columns={'Date': 'ds', 'Value': 'y'}, inplace=True)
-    st.write(data)
-
-    max_date = data['ds'].max()
-    # st.write(max_date)
 
 """
 ### Step 2: Select Forecast Horizon
@@ -53,8 +71,8 @@ periods_input = st.number_input('How many periods would you like to forecast int
 
 if df is not None:
     m = Prophet(seasonality_mode='multiplicative', seasonality_prior_scale=5)
-    m.add_seasonality(name='monthly', period=30.5, fourier_order=5)
-    m.add_country_holidays(country_name='US')
+    #m.add_seasonality(name='monthly', period=30.5, fourier_order=5)
+    #m.add_country_holidays(country_name='US')
     m.fit(data)
 
 """
